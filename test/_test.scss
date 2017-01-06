@@ -55,6 +55,34 @@
       'em-calc with different rem-base');
   }
 
+  @include test('map-zip') {
+    $test: map-zip(('key1', 'key2', 'key3'), ('value1', 'value2', 'value3'));
+    $expect: ('key1': 'value1', 'key2': 'value2', 'key3': 'value3');
+    @include assert-equal($test, $expect,
+      'Transform two list in one map, first the keys, second the values');
+  }
+
+  @include test('swap') {
+    $test: swap((1,3,2), 2, 3);
+    $expect: (1,2,3);
+    @include assert-equal($test, $expect,
+      'Swap two elements in a list');
+  }
+
+  @include test('map-sort-by-value') {
+    $map: map-sort-by-value(('c': 3, 'a': 1, 'd': 4, 'b': 2, 'e': 5));
+    $test: nth($map, 1);
+    $expect: ('a' 1);
+    $map2: map-sort-by-value(('c': 3, 'a': 1, 'd': 4, 'b': 2, 'e': 5), false);
+    $test2: nth($map2, 1);
+    $expect2: ('e' 5);
+    @include assert-equal($test, $expect,
+      'Sort a map based on numeric value');
+    @include assert-equal($test2, $expect2,
+      'Sort a map based on numeric value, order desc');
+  }
+
+
 }
 
 
@@ -98,6 +126,23 @@
       @include expect {
         display: block;
         display: none;
+      }
+    }
+  }
+
+  @include test('Responsive gutter') {
+
+    @include assert(
+      'Test basic responsive gutter mixin'
+    ) {
+      @include input {
+        @include responsive-gutter() {
+          margin-top: $column-gutter;
+        };
+      }
+
+      @include expect {
+        margin-top: $column-gutter;
       }
     }
   }
@@ -252,9 +297,10 @@
 
       @include expect {
         box-sizing: border-box;
-        flex: 1 0 auto;
-        margin: 0 (-$column-gutter / 2);
+        margin-left: (-$column-gutter / 2);
+        margin-right: (-$column-gutter / 2);
         width: calc(100% + #{$column-gutter});
+        flex: 1 0 auto;
         display: flex;
         flex-wrap: wrap;
       }
@@ -267,7 +313,8 @@
 
       @include expect {
         box-sizing: border-box;
-        margin: 0 auto;
+        margin-left: auto;
+        margin-right: auto;
         max-width: $row-width;
         width: 100%;
         display: flex;
@@ -399,6 +446,7 @@
   }
 };
 };
+
 
 // MEDIA QUERIES AND VISIBILITY ARE NOT TESTABLE, WE ARE WORKING ON IT!
 
